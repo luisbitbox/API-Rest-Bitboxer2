@@ -6,10 +6,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
-
 @Mapper(componentModel = "spring")
-public interface ItemMapper {
-    ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
+public interface IItemMapper {
+    IItemMapper INSTANCE = Mappers.getMapper(IItemMapper.class);
 
     ItemDTO toDTO(Item item);
 

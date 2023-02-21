@@ -1,9 +1,11 @@
 package luis.ejercicio.bitboxer2.controller;
 
 import luis.ejercicio.bitboxer2.dto.ItemDTO;
+import luis.ejercicio.bitboxer2.dto.PriceReductionDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
 import luis.ejercicio.bitboxer2.enums.StateEnum;
 import luis.ejercicio.bitboxer2.service.ItemService;
+import luis.ejercicio.bitboxer2.service.PriceReductionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ public class ItemController {
 
     @Autowired
     ItemService itemService;
+    @Autowired
+    PriceReductionService priceReductionService;
 
 
     @PostMapping
@@ -74,6 +78,21 @@ public class ItemController {
         }
     }
 
+    @GetMapping("/{id}/priceReductions")
+    ResponseEntity<?> getItemPriceReductions(@PathVariable Long id){
+        try {
+            List<PriceReductionDTO> priceReductions = (List) itemService.findPriceReductionsByItemId(id);
+            for (PriceReductionDTO pr: priceReductions
+                 ) {
+                System.out.println(pr.getReducedPrice() + " - " + pr.getStartDate() + " - " + pr.getEndDate());
+            }
+
+            return  ResponseEntity.ok().body(priceReductions);
+        }catch (Exception e){
+            return ResponseEntity.noContent().build();
+        }
+    }
+
     @PutMapping("/{id}")
     ResponseEntity<?>  updateItem(@PathVariable Long id, @RequestBody ItemDTO itemDTO){
         try {
@@ -88,7 +107,7 @@ public class ItemController {
                 oItem.get().setDescription(itemDTO.getDescription());
                 oItem.get().setPrice(itemDTO.getPrice());
                 oItem.get().setState(itemDTO.getState());
-                oItem.get().setCreation(itemDTO.getCreation());
+                oItem.get().setCreation(new Date());
                 oItem.get().setSuppliers(itemDTO.getSuppliers());
                 oItem.get().setPriceReductions(itemDTO.getPriceReductions());
 
@@ -111,20 +130,45 @@ public class ItemController {
             if (!oItem.isPresent()){
                 return ResponseEntity.notFound().build();
             }
+                oItem.get().addSupplier(supplierDTO);
+                itemService.createItem(oItem.get());
 
             // Si el Item tiene como state ACTIVE se permite añadirle un supplier
-            if(StateEnum.ACTIVE.equals(oItem.get().getState())){
-                List<SupplierDTO> listaSupplier = oItem.get().getSuppliers();
+            /*if(StateEnum.ACTIVE.equals(oItem.get().getState())){
+                //List<SupplierDTO> listaSupplier = oItem.get().getSuppliers();
 
-                //Si la lista no incluye el supplier se le añade
-                if(!listaSupplier.contains(supplierDTO)){
-                    listaSupplier.add(supplierDTO);
-                    oItem.get().setSuppliers(listaSupplier);
-                }
+                //Si la lista es null o  no incluye el supplier se le añade
+                if(!oItem.get().getSuppliers().contains(supplierDTO)){
+                }*/
 
-                itemService.createItem(oItem.get());
+            //}
+
+
+            return  ResponseEntity.status(HttpStatus.CREATED).build();
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @PutMapping("/{id}/addPriceReduction")
+    ResponseEntity<?> addPriceReduction(@PathVariable Long id, @RequestBody PriceReductionDTO priceReductionDTO){
+        try{
+            Optional<ItemDTO> oItem = itemService.findById(id);
+
+            if (!oItem.isPresent()){
+                return ResponseEntity.notFound().build();
             }
-
+            if(priceReductionDTO!= null){
+                priceReductionService.createPriceReduction(priceReductionDTO);
+                oItem.get().addPriceReduction(priceReductionDTO);
+                itemService.createItem(oItem.get());
+                /*for(PriceReductionDTO pr: oItem.get().getPriceReductions()){
+                    System.out.println(pr.toString());
+                }*/
+            }
 
             return  ResponseEntity.status(HttpStatus.CREATED).build();
 

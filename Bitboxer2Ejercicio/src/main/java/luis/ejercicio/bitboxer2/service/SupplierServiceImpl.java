@@ -2,7 +2,7 @@ package luis.ejercicio.bitboxer2.service;
 
 import luis.ejercicio.bitboxer2.dto.ItemDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
-import luis.ejercicio.bitboxer2.mapper.ItemMapper;
+import luis.ejercicio.bitboxer2.mapper.IItemMapper;
 import luis.ejercicio.bitboxer2.mapper.SupplierMapper;
 import luis.ejercicio.bitboxer2.model.Item;
 import luis.ejercicio.bitboxer2.model.Supplier;
@@ -24,7 +24,7 @@ public class SupplierServiceImpl implements SupplierService{
     SupplierMapper supplierMapper;
 
     @Autowired
-    ItemMapper itemMapper;
+    IItemMapper itemMapper;
 
 
     @Override

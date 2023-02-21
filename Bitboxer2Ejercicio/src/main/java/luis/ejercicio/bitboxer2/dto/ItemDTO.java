@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import luis.ejercicio.bitboxer2.enums.StateEnum;
 import luis.ejercicio.bitboxer2.model.Creator;
-import luis.ejercicio.bitboxer2.model.PriceReduction;
-import luis.ejercicio.bitboxer2.model.Supplier;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +41,15 @@ public class ItemDTO {
                 this.suppliers = new ArrayList<>();
             }
             this.suppliers.add(supplier);
+        }
+    }
+
+    public void addPriceReduction(PriceReductionDTO priceReductionDTO){
+        if(priceReductionDTO != null){
+            if(this.priceReductions == null){
+                this.priceReductions = new ArrayList<>();
+            }
+            this.priceReductions.add(priceReductionDTO);
         }
     }
 }

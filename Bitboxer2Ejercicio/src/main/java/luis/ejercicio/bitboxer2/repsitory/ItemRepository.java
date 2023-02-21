@@ -2,6 +2,7 @@ package luis.ejercicio.bitboxer2.repsitory;
 
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
 import luis.ejercicio.bitboxer2.model.Item;
+import luis.ejercicio.bitboxer2.model.PriceReduction;
 import luis.ejercicio.bitboxer2.model.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,5 +15,8 @@ import java.util.List;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT i.suppliers FROM Item i WHERE i.idItem = :id")
     List<Supplier> findSuppliersByItemId(@Param("id") Long id);
+
+    @Query("SELECT i.priceReductions FROM Item i WHERE i.idItem = :id")
+    List<PriceReduction> findPriceReductionsByItemId(@Param("id") Long id);
 
 }

@@ -1,6 +1,7 @@
 package luis.ejercicio.bitboxer2.service;
 
 import luis.ejercicio.bitboxer2.dto.ItemDTO;
+import luis.ejercicio.bitboxer2.dto.PriceReductionDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface ItemService{
     void createItem(ItemDTO item);
 
     List<SupplierDTO> findSuppliersByItemId(Long idItem);
+
+    List<PriceReductionDTO> findPriceReductionsByItemId(Long idItem);
 }

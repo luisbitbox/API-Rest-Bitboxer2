@@ -1,6 +1,9 @@
 package luis.ejercicio.bitboxer2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idItem")
 public class Item implements Serializable {
 
     @Id
@@ -50,7 +54,6 @@ public class Item implements Serializable {
     List<Supplier> suppliers;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-    @JsonBackReference
     List<PriceReduction> priceReductions;
 
     public void addSupplier(Supplier supplier){
@@ -59,6 +62,15 @@ public class Item implements Serializable {
                 this.suppliers = new ArrayList<>();
             }
             this.suppliers.add(supplier);
+        }
+    }
+
+    public void addPriceReduction(PriceReduction priceReduction){
+        if(priceReduction != null){
+            if(this.priceReductions == null){
+                this.priceReductions = new ArrayList<>();
+            }
+            this.priceReductions.add(priceReduction);
         }
     }
 }

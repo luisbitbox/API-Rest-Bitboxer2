@@ -1,10 +1,13 @@
 package luis.ejercicio.bitboxer2.service;
 
 import luis.ejercicio.bitboxer2.dto.ItemDTO;
+import luis.ejercicio.bitboxer2.dto.PriceReductionDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
-import luis.ejercicio.bitboxer2.mapper.ItemMapper;
+import luis.ejercicio.bitboxer2.mapper.IItemMapper;
+import luis.ejercicio.bitboxer2.mapper.PriceReductionMapper;
 import luis.ejercicio.bitboxer2.mapper.SupplierMapper;
 import luis.ejercicio.bitboxer2.model.Item;
+import luis.ejercicio.bitboxer2.model.PriceReduction;
 import luis.ejercicio.bitboxer2.model.Supplier;
 import luis.ejercicio.bitboxer2.repsitory.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,11 @@ public class ItemServiceImpl implements ItemService{
     ItemRepository itemRepository;
 
     @Autowired
-    ItemMapper itemMapper;
+    IItemMapper itemMapper;
+
+    @Autowired
+    PriceReductionMapper priceReductionMapper;
+
 
     @Autowired
     SupplierMapper supplierMapper;
@@ -53,6 +60,12 @@ public class ItemServiceImpl implements ItemService{
     public List<SupplierDTO> findSuppliersByItemId(Long idItem) {
         List<Supplier> suppliers = itemRepository.findSuppliersByItemId(idItem);
         return supplierMapper.toDTOList(suppliers);
+    }
+
+    @Override
+    public List<PriceReductionDTO> findPriceReductionsByItemId(Long idItem) {
+        List<PriceReduction> priceReductions = itemRepository.findPriceReductionsByItemId(idItem);
+        return priceReductionMapper.toDTOList(priceReductions);
     }
 
 
