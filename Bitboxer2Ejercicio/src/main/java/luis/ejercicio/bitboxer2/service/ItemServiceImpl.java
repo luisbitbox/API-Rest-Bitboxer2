@@ -1,11 +1,10 @@
 package luis.ejercicio.bitboxer2.service;
 
+import luis.ejercicio.bitboxer2.converter.ItemConverter;
+import luis.ejercicio.bitboxer2.converter.PriceReductionConverter;
 import luis.ejercicio.bitboxer2.dto.ItemDTO;
 import luis.ejercicio.bitboxer2.dto.PriceReductionDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
-import luis.ejercicio.bitboxer2.mapper.IItemMapper;
-import luis.ejercicio.bitboxer2.mapper.PriceReductionMapper;
-import luis.ejercicio.bitboxer2.mapper.SupplierMapper;
 import luis.ejercicio.bitboxer2.model.Item;
 import luis.ejercicio.bitboxer2.model.PriceReduction;
 import luis.ejercicio.bitboxer2.model.Supplier;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,48 +24,53 @@ public class ItemServiceImpl implements ItemService{
     ItemRepository itemRepository;
 
     @Autowired
-    IItemMapper itemMapper;
-
-    @Autowired
-    PriceReductionMapper priceReductionMapper;
-
-
-    @Autowired
-    SupplierMapper supplierMapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<ItemDTO> findAllItems() {
         List<Item> items = itemRepository.findAll();
 
-        return itemMapper.toDTOList(items);
+        return ItemConverter.toDTOList(items);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ItemDTO> findById(Long idItem) {
+    public ItemDTO findById(Long idItem) {
         Optional<Item> item = itemRepository.findById(idItem);
-        return item.map(itemMapper::toDTO);
+        ItemDTO itemDTO = ItemConverter.toDTO(item.get());
+        return itemDTO;
     }
 
     @Override
     @Transactional
-    public void createItem(ItemDTO itemDTO) {
-        Item item = itemMapper.toEntity(itemDTO);
+    public ItemDTO createItem(ItemDTO itemDTO) {
+        Item item = ItemConverter.toEntity(itemDTO);
         itemRepository.save(item);
+        ItemDTO itemDTOSaved = ItemConverter.toDTO(itemRepository.save(item));
+
+        return itemDTOSaved;
+    }
+
+    public List<PriceReductionDTO> getItemPriceReduction(Long idItem){
+        Optional<Item> item = itemRepository.findById(idItem);
+        List<PriceReduction> priceReductions = new ArrayList<>(item.get().getPriceReductions());
+        List<PriceReductionDTO> priceReductionDTOS = PriceReductionConverter.toDTOList(priceReductions);
+
+        return priceReductionDTOS;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<SupplierDTO> findSuppliersByItemId(Long idItem) {
         List<Supplier> suppliers = itemRepository.findSuppliersByItemId(idItem);
-        return supplierMapper.toDTOList(suppliers);
+        //return supplierMapper.toDTOList(suppliers);
+        return  null;
     }
 
     @Override
     public List<PriceReductionDTO> findPriceReductionsByItemId(Long idItem) {
         List<PriceReduction> priceReductions = itemRepository.findPriceReductionsByItemId(idItem);
-        return priceReductionMapper.toDTOList(priceReductions);
+        return PriceReductionConverter.toDTOList(priceReductions);
     }
 
 

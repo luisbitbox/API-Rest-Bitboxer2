@@ -1,11 +1,7 @@
 package luis.ejercicio.bitboxer2.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import luis.ejercicio.bitboxer2.enums.StateEnum;
-import luis.ejercicio.bitboxer2.model.Creator;
 
 
 import java.util.ArrayList;
@@ -29,10 +25,12 @@ public class ItemDTO {
 
     Date creation;
 
-    Creator creator;
-
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<SupplierDTO> suppliers;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<PriceReductionDTO> priceReductions;
 
     public void addSupplier(SupplierDTO supplier){
@@ -49,6 +47,7 @@ public class ItemDTO {
             if(this.priceReductions == null){
                 this.priceReductions = new ArrayList<>();
             }
+            priceReductionDTO.setItemDTO(this);
             this.priceReductions.add(priceReductionDTO);
         }
     }

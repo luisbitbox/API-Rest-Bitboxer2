@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import luis.ejercicio.bitboxer2.model.Item;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -19,5 +20,14 @@ public class SupplierDTO {
 
     String country;
 
-    List<Item> items;
+    List<ItemDTO> items;
+
+    public  void addItemDTO(ItemDTO itemDTO){
+        if (itemDTO != null){
+            if(this.items == null){
+                this.items = new ArrayList<>();
+            }
+            this.items.add(itemDTO);
+        }
+    }
 }

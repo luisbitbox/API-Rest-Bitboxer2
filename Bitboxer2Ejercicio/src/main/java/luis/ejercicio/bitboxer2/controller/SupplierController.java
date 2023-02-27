@@ -1,5 +1,6 @@
 package luis.ejercicio.bitboxer2.controller;
 
+import luis.ejercicio.bitboxer2.dto.ItemDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
 import luis.ejercicio.bitboxer2.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,17 @@ public class SupplierController {
 
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{id}/items")
+    ResponseEntity<?> getSupplierItems(@PathVariable Long id){
+        try {
+            List<ItemDTO> items = (List) supplierService.findItemsBySupplierId(id);
+
+            return  ResponseEntity.ok().body(items);
+        }catch (Exception e){
+            return ResponseEntity.noContent().build();
         }
     }
 
@@ -67,6 +79,24 @@ public class SupplierController {
             oSupplier.get().setCountry(supplierDTO.getCountry());
             oSupplier.get().setItems(supplierDTO.getItems());
 
+            supplierService.createSupplier(oSupplier.get());
+
+            return  ResponseEntity.status(HttpStatus.CREATED).build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/{id}/addItem")
+    ResponseEntity<SupplierDTO> addItemToSupplier(@PathVariable Long id, @RequestBody ItemDTO itemDTO){
+        try {
+            Optional<SupplierDTO> oSupplier = supplierService.findSupplierById(id);
+
+            if (!oSupplier.isPresent()){
+                return  ResponseEntity.notFound().build();
+            }
+
+            oSupplier.get().addItemDTO(itemDTO);
             supplierService.createSupplier(oSupplier.get());
 
             return  ResponseEntity.status(HttpStatus.CREATED).build();

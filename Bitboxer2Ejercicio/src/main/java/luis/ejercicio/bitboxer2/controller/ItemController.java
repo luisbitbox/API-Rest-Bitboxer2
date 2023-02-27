@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -45,12 +46,13 @@ public class ItemController {
     @GetMapping("/{id}")
     ResponseEntity<?> getItem(@PathVariable Long id){
         try {
-            Optional<ItemDTO> itemDTO = itemService.findById(id);
+            ItemDTO itemDTO = itemService.findById(id);
 
-            if (!itemDTO.isPresent()){
+            if(itemDTO == null){
                 return ResponseEntity.notFound().build();
             }
-            return  ResponseEntity.ok().body(itemDTO.get());
+
+            return  ResponseEntity.ok().body(itemDTO);
         }catch (Exception e){
             return ResponseEntity.noContent().build();
         }
@@ -70,9 +72,18 @@ public class ItemController {
     @GetMapping("/{id}/suppliers")
     ResponseEntity<?> getItemSuppliers(@PathVariable Long id){
         try {
-            List<SupplierDTO> suppliers = (List)itemService.findSuppliersByItemId(id);
+            ItemDTO oItem = itemService.findById(id);
+            List<SupplierDTO> suppliers;
 
-            return  ResponseEntity.ok().body(suppliers);
+            if(oItem == null){
+                return ResponseEntity.notFound().build();
+            }
+
+            if(oItem.getSuppliers() != null){
+                suppliers = oItem.getSuppliers();
+                return  ResponseEntity.ok().body(suppliers);
+            }
+            return  ResponseEntity.ok().body(new ArrayList<SupplierDTO>());
         }catch (Exception e){
             return ResponseEntity.noContent().build();
         }
@@ -81,11 +92,7 @@ public class ItemController {
     @GetMapping("/{id}/priceReductions")
     ResponseEntity<?> getItemPriceReductions(@PathVariable Long id){
         try {
-            List<PriceReductionDTO> priceReductions = (List) itemService.findPriceReductionsByItemId(id);
-            for (PriceReductionDTO pr: priceReductions
-                 ) {
-                System.out.println(pr.getReducedPrice() + " - " + pr.getStartDate() + " - " + pr.getEndDate());
-            }
+            List<PriceReductionDTO> priceReductions = itemService.findPriceReductionsByItemId(id);
 
             return  ResponseEntity.ok().body(priceReductions);
         }catch (Exception e){
@@ -96,28 +103,28 @@ public class ItemController {
     @PutMapping("/{id}")
     ResponseEntity<?>  updateItem(@PathVariable Long id, @RequestBody ItemDTO itemDTO){
         try {
-            Optional<ItemDTO> oItem = itemService.findById(id);
+            ItemDTO oItem = itemService.findById(id);
 
-            if (!oItem.isPresent()){
+            if(oItem == null){
                 return ResponseEntity.notFound().build();
             }
 
             // Si el Item tiene como state ACTIVE se permite editar
-            if(StateEnum.ACTIVE.equals(oItem.get().getState())){
-                oItem.get().setDescription(itemDTO.getDescription());
-                oItem.get().setPrice(itemDTO.getPrice());
-                oItem.get().setState(itemDTO.getState());
-                oItem.get().setCreation(new Date());
-                oItem.get().setSuppliers(itemDTO.getSuppliers());
-                oItem.get().setPriceReductions(itemDTO.getPriceReductions());
+            if(StateEnum.ACTIVE.equals(oItem.getState())){
+                oItem.setDescription(itemDTO.getDescription());
+                oItem.setPrice(itemDTO.getPrice());
+                oItem.setState(itemDTO.getState());
+                oItem.setCreation(new Date());
+                oItem.setSuppliers(itemDTO.getSuppliers());
+                oItem.setPriceReductions(itemDTO.getPriceReductions());
 
-                itemService.createItem(oItem.get());
+                itemService.createItem(oItem);
             }
-
 
             return  ResponseEntity.status(HttpStatus.CREATED).build();
 
         }catch (Exception e){
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -125,26 +132,22 @@ public class ItemController {
     @PutMapping("/{id}/addSupplier")
     ResponseEntity<?>  addSupplierToItem(@PathVariable Long id, @RequestBody SupplierDTO supplierDTO){
         try {
-            Optional<ItemDTO> oItem = itemService.findById(id);
+            ItemDTO oItem = itemService.findById(id);
+            ItemDTO itemSaved = null;
 
-            if (!oItem.isPresent()){
+            if(oItem == null){
                 return ResponseEntity.notFound().build();
             }
-                oItem.get().addSupplier(supplierDTO);
-                itemService.createItem(oItem.get());
 
-            // Si el Item tiene como state ACTIVE se permite añadirle un supplier
-            /*if(StateEnum.ACTIVE.equals(oItem.get().getState())){
-                //List<SupplierDTO> listaSupplier = oItem.get().getSuppliers();
+            // Si el Item tiene como state ACTIVE && si la lista no contiene al supplier se permite agregarlo
+            if (StateEnum.ACTIVE.equals(oItem.getState()) ){
 
-                //Si la lista es null o  no incluye el supplier se le añade
-                if(!oItem.get().getSuppliers().contains(supplierDTO)){
-                }*/
+                oItem.addSupplier(supplierDTO);
+                itemSaved = itemService.createItem(oItem);
 
-            //}
+            }
 
-
-            return  ResponseEntity.status(HttpStatus.CREATED).build();
+            return  ResponseEntity.status(HttpStatus.CREATED).body(itemSaved);
 
         }catch (Exception e){
             System.out.println(e.getMessage());
@@ -152,29 +155,4 @@ public class ItemController {
         }
     }
 
-
-    @PutMapping("/{id}/addPriceReduction")
-    ResponseEntity<?> addPriceReduction(@PathVariable Long id, @RequestBody PriceReductionDTO priceReductionDTO){
-        try{
-            Optional<ItemDTO> oItem = itemService.findById(id);
-
-            if (!oItem.isPresent()){
-                return ResponseEntity.notFound().build();
-            }
-            if(priceReductionDTO!= null){
-                priceReductionService.createPriceReduction(priceReductionDTO);
-                oItem.get().addPriceReduction(priceReductionDTO);
-                itemService.createItem(oItem.get());
-                /*for(PriceReductionDTO pr: oItem.get().getPriceReductions()){
-                    System.out.println(pr.toString());
-                }*/
-            }
-
-            return  ResponseEntity.status(HttpStatus.CREATED).build();
-
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
-    }
 }

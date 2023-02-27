@@ -1,15 +1,11 @@
 package luis.ejercicio.bitboxer2.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.*;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idSupplier")
+//@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idSupplier")
 public class Supplier implements Serializable {
 
     @Id
@@ -31,6 +28,17 @@ public class Supplier implements Serializable {
     String country;
 
     @ManyToMany(mappedBy = "suppliers")
+    //@JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<Item> items;
 
+    public void addItem(Item item){
+        if(item != null){
+            if(this.items == null){
+                this.items = new ArrayList<>();
+            }
+            this.items.add(item);
+        }
+    }
 }

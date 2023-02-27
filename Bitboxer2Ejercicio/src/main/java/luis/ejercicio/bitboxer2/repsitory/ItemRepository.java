@@ -1,6 +1,5 @@
 package luis.ejercicio.bitboxer2.repsitory;
 
-import luis.ejercicio.bitboxer2.dto.SupplierDTO;
 import luis.ejercicio.bitboxer2.model.Item;
 import luis.ejercicio.bitboxer2.model.PriceReduction;
 import luis.ejercicio.bitboxer2.model.Supplier;

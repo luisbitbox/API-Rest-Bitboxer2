@@ -1,9 +1,6 @@
 package luis.ejercicio.bitboxer2.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idPriceReduction")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idPriceReduction")
 public class PriceReduction implements Serializable {
 
     @Id
@@ -34,9 +31,9 @@ public class PriceReduction implements Serializable {
     Date endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "item_id")
+    @JoinColumn(name= "item_id", referencedColumnName = "iditem")
+    @JsonBackReference
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @JsonIgnore
     Item item;
 }

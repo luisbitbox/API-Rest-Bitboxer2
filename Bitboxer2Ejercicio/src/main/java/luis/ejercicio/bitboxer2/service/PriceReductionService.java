@@ -11,5 +11,5 @@ public interface PriceReductionService {
 
     Optional<PriceReductionDTO> findPriceReductionById(Long id);
 
-    void createPriceReduction(PriceReductionDTO priceReductionDTO);
+    PriceReductionDTO createPriceReduction(PriceReductionDTO priceReductionDTO);
 }

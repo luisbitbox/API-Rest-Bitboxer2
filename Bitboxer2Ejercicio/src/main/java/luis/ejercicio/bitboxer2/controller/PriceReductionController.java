@@ -1,5 +1,6 @@
 package luis.ejercicio.bitboxer2.controller;
 
+import luis.ejercicio.bitboxer2.dto.ItemDTO;
 import luis.ejercicio.bitboxer2.dto.PriceReductionDTO;
 import luis.ejercicio.bitboxer2.service.PriceReductionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/erp/api/priceReduction")
+@CrossOrigin
 public class PriceReductionController {
 
     @Autowired
@@ -64,6 +66,25 @@ public class PriceReductionController {
             oPriceReduction.get().setReducedPrice(priceReductionDTO.getReducedPrice());
             oPriceReduction.get().setStartDate(priceReductionDTO.getStartDate());
             oPriceReduction.get().setEndDate(priceReductionDTO.getEndDate());
+
+            priceReductionService.createPriceReduction(oPriceReduction.get());
+
+            return  ResponseEntity.status(HttpStatus.CREATED).build();
+
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/{id}/item")
+    ResponseEntity<?>  addPriceReductionToItem(@PathVariable Long id, @RequestBody ItemDTO itemDTO){
+        try {
+            Optional<PriceReductionDTO> oPriceReduction = priceReductionService.findPriceReductionById(id);
+
+            if(!oPriceReduction.isPresent()){
+                return ResponseEntity.notFound().build();
+            }
+            oPriceReduction.get().setItemDTO(itemDTO);
 
             priceReductionService.createPriceReduction(oPriceReduction.get());
 

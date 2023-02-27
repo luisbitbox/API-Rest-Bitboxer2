@@ -1,13 +1,7 @@
 package luis.ejercicio.bitboxer2.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.*;
+import lombok.*;
 import luis.ejercicio.bitboxer2.enums.StateEnum;
 
 import javax.persistence.*;
@@ -21,7 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idItem")
+//@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idItem")
 public class Item implements Serializable {
 
     @Id
@@ -42,8 +37,8 @@ public class Item implements Serializable {
 
     Date creation;
 
-    @ManyToOne
-    Creator creator;
+//    @ManyToOne
+//    User creator;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -51,9 +46,12 @@ public class Item implements Serializable {
             joinColumns = {@JoinColumn(name = "item_id")},
             inverseJoinColumns = {@JoinColumn(name = "supplier_id")}
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     List<Supplier> suppliers;
 
-    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     List<PriceReduction> priceReductions;
 
     public void addSupplier(Supplier supplier){
@@ -70,6 +68,7 @@ public class Item implements Serializable {
             if(this.priceReductions == null){
                 this.priceReductions = new ArrayList<>();
             }
+            priceReduction.setItem(this);
             this.priceReductions.add(priceReduction);
         }
     }

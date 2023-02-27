@@ -17,5 +17,5 @@ public class PriceReductionDTO {
     Double reducedPrice;
     Date startDate;
     Date endDate;
-    Item item;
+    ItemDTO itemDTO;
 }

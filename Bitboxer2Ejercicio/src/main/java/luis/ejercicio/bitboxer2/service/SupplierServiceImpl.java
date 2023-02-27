@@ -1,9 +1,8 @@
 package luis.ejercicio.bitboxer2.service;
 
+import luis.ejercicio.bitboxer2.converter.SupplierConverter;
 import luis.ejercicio.bitboxer2.dto.ItemDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
-import luis.ejercicio.bitboxer2.mapper.IItemMapper;
-import luis.ejercicio.bitboxer2.mapper.SupplierMapper;
 import luis.ejercicio.bitboxer2.model.Item;
 import luis.ejercicio.bitboxer2.model.Supplier;
 import luis.ejercicio.bitboxer2.repsitory.SupplierRepository;
@@ -20,11 +19,6 @@ public class SupplierServiceImpl implements SupplierService{
     @Autowired
     SupplierRepository supplierRepository;
 
-    @Autowired
-    SupplierMapper supplierMapper;
-
-    @Autowired
-    IItemMapper itemMapper;
 
 
     @Override
@@ -32,20 +26,20 @@ public class SupplierServiceImpl implements SupplierService{
     public List<SupplierDTO> findAllSuppliers() {
         List<Supplier> suppliers = supplierRepository.findAll();
 
-        return supplierMapper.toDTOList(suppliers);
+        return SupplierConverter.toDTOList(suppliers);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<SupplierDTO> findSupplierById(Long idSupplier) {
         Optional<Supplier> supplier = supplierRepository.findById(idSupplier);
-        return supplier.map(supplierMapper::toDTO);
+        return supplier.map(SupplierConverter::toDTO);
     }
 
     @Override
     @Transactional
     public void createSupplier(SupplierDTO supplierDTO) {
-        Supplier supplier = supplierMapper.toEntity(supplierDTO);
+        Supplier supplier = SupplierConverter.toEntity(supplierDTO);
         supplierRepository.save(supplier);
     }
 
@@ -54,6 +48,7 @@ public class SupplierServiceImpl implements SupplierService{
     @Transactional(readOnly = true)
     public List<ItemDTO> findItemsBySupplierId(Long idSupplier) {
         List<Item> items = supplierRepository.findItemsBySupplierId(idSupplier);
-        return itemMapper.toDTOList(items);
+        //return itemMapper.toDTOList(items);
+        return null;
     }
 }

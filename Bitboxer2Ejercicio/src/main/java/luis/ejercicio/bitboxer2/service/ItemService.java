@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface ItemService{
     List<ItemDTO> findAllItems();
 
-    Optional<ItemDTO> findById(Long idItem);
+    ItemDTO findById(Long idItem);
 
-    void createItem(ItemDTO item);
+    ItemDTO createItem(ItemDTO item);
 
     List<SupplierDTO> findSuppliersByItemId(Long idItem);
 
