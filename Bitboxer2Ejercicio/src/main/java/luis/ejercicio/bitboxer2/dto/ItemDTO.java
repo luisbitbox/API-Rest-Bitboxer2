@@ -25,6 +25,8 @@ public class ItemDTO {
 
     Date creation;
 
+    UsuarioDTO creator;
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     List<SupplierDTO> suppliers;

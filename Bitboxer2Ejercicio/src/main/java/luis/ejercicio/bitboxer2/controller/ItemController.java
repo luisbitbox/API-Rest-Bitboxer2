@@ -3,6 +3,7 @@ package luis.ejercicio.bitboxer2.controller;
 import luis.ejercicio.bitboxer2.dto.ItemDTO;
 import luis.ejercicio.bitboxer2.dto.PriceReductionDTO;
 import luis.ejercicio.bitboxer2.dto.SupplierDTO;
+import luis.ejercicio.bitboxer2.dto.UsuarioDTO;
 import luis.ejercicio.bitboxer2.enums.StateEnum;
 import luis.ejercicio.bitboxer2.service.ItemService;
 import luis.ejercicio.bitboxer2.service.PriceReductionService;
@@ -33,10 +34,7 @@ public class ItemController {
             itemDTO.setState(StateEnum.ACTIVE);
             itemDTO.setCreation(new Date());
 
-            System.out.println(itemDTO.getIdItem() + "  " + itemDTO.getDescription() + "  " + itemDTO.getPrice()+ "  " + itemDTO.getItemCode());
-
-            itemService.createItem(itemDTO);
-            return  ResponseEntity.ok().build();
+            return  ResponseEntity.ok().body(itemService.createItem(itemDTO));
 
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
@@ -148,6 +146,24 @@ public class ItemController {
             }
 
             return  ResponseEntity.status(HttpStatus.CREATED).body(itemSaved);
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/{id}/addCreator")
+    ResponseEntity<?>  addSupplierToItem(@PathVariable Long id, @RequestBody UsuarioDTO creatorDTO){
+        try {
+            ItemDTO oItem = itemService.findById(id);
+            System.out.println(creatorDTO.getUsername()+" - " + creatorDTO.getPassword() + " - " + creatorDTO.getRole());
+
+            if(oItem == null){
+                return ResponseEntity.notFound().build();
+            }
+            oItem.setCreator(creatorDTO);
+            return  ResponseEntity.status(HttpStatus.CREATED).body(itemService.createItem(oItem));
 
         }catch (Exception e){
             System.out.println(e.getMessage());

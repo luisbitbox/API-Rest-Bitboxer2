@@ -22,6 +22,10 @@ public class ItemConverter {
         itemDTO.setState(item.getState());
         itemDTO.setCreation(item.getCreation());
 
+        if(item.getCreator() != null){
+            itemDTO.setCreator(UsuarioConverter.toDTO(item.getCreator()));
+        }
+
         if(item.getSuppliers() != null){
             itemDTO.setSuppliers(new ArrayList<>());
             for(Supplier s: item.getSuppliers()){
@@ -48,6 +52,10 @@ public class ItemConverter {
         item.setState(itemDTO.getState());
         item.setPrice(itemDTO.getPrice());
         item.setCreation(itemDTO.getCreation());
+
+        if(itemDTO.getCreator() != null){
+            item.setCreator(UsuarioConverter.toEntity(itemDTO.getCreator()));
+        }
 
         if(itemDTO.getSuppliers() != null){
             item.setSuppliers(new ArrayList<>());

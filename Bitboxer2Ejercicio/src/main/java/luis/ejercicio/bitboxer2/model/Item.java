@@ -15,13 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-//@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "idItem")
 public class Item implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    //@SequenceGenerator(name = "model_id_seq", sequenceName = "model_id_seq", allocationSize = 1, schema = "erp")
     @Column(name = "iditem")
     Long idItem;
 
@@ -37,8 +34,10 @@ public class Item implements Serializable {
 
     Date creation;
 
-//    @ManyToOne
-//    User creator;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name= "creator_id", referencedColumnName = "idcreator")
+    @JsonBackReference
+    Usuario creator;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
