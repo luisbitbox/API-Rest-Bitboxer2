@@ -136,9 +136,12 @@ public class ItemController {
             if(oItem == null){
                 return ResponseEntity.notFound().build();
             }
+            if (oItem.getSuppliers().contains(supplierDTO)){
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
 
             // Si el Item tiene como state ACTIVE && si la lista no contiene al supplier se permite agregarlo
-            if (StateEnum.ACTIVE.equals(oItem.getState()) ){
+            if (StateEnum.ACTIVE.equals(oItem.getState())){
 
                 oItem.addSupplier(supplierDTO);
                 itemSaved = itemService.createItem(oItem);
